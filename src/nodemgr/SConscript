@@ -105,6 +105,8 @@ common_sources = [
            'common/event_manager.py',
            'common/linux_sys_data.py',
            'common/process_stat.py',
+           'common/psutil_mem_cpu.py',
+           'common/psutil_process_manager.py',
            'common/utils.py',
           ]
 common_sources_rules = []

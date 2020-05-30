@@ -35,6 +35,7 @@ try:
 except Exception:
     # there is no docker library. assumes that code runs not for microservices
     DockerProcessInfoManager = None
+from nodemgr.common.psutil_process_manager import PsutilProcessInfoManager
 from nodemgr.common.linux_sys_data import LinuxSysData
 
 
@@ -113,7 +114,11 @@ class EventManager(object):
         event_handlers['PROCESS_LIST_UPDATE'] = self._update_current_processes
         gevent.signal(signal.SIGHUP, self.nodemgr_sighup_handler)
         self.system_data = LinuxSysData(self.msg_log, self.config.corefile_path)
-        if DockerProcessInfoManager and (utils.is_running_in_docker()
+        if utils.is_running_in_kubepod():
+            self.process_info_manager = PsutilProcessInfoManager(
+            self, type_info._module_type, unit_names, event_handlers,
+            update_process_list)
+        elif DockerProcessInfoManager and (utils.is_running_in_docker()
                                          or utils.is_running_in_kubepod()):
             self.process_info_manager = DockerProcessInfoManager(
             type_info._module_type, unit_names, event_handlers,
