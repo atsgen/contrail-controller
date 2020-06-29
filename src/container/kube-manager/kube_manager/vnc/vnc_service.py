@@ -192,6 +192,9 @@ class VncService(VncCommon):
         return ll_obj
 
     def _create_listeners(self, namespace, lb, ports):
+        if ports is None:
+            """Nothing to process return from here"""
+            return
         for port in ports:
             listener_found = False
             for ll_id in lb.loadbalancer_listeners:

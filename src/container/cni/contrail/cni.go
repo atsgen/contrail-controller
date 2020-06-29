@@ -166,9 +166,9 @@ func (cni *ContrailCni) makeInterface(
  *   the provided IfName arg is returned.
  */
 func (cni *ContrailCni) buildContainerIntfName(
-	index int, isMetaPlugin bool) string {
+	index int) string {
 	var intfName string
-	if isMetaPlugin == true {
+	if cni.cniArgs.IfName != "" {
 		intfName = cni.cniArgs.IfName
 	} else {
 		intfName = VIF_TYPE_ETH + strconv.Itoa(index)
@@ -315,7 +315,7 @@ func (cni *ContrailCni) CmdAdd() error {
 		if result.Annotations.Interface != "" {
 			containerIntfName = result.Annotations.Interface
 		} else {
-			containerIntfName = cni.buildContainerIntfName(index, cni.MetaPlugin)
+			containerIntfName = cni.buildContainerIntfName(index)
 		}
 
 		if cni.MetaPlugin {
@@ -380,7 +380,7 @@ func (cni *ContrailCni) CmdAdd() error {
 		if cni.MetaPlugin {
 			finalTypesResult = typesResult
 		} else {
-			if containerIntfName == "eth0" {
+			if containerIntfName == "eth0" || containerIntfName == cni.cniArgs.IfName {
 				finalTypesResult = typesResult
 			}
 		}
