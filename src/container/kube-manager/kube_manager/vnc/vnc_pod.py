@@ -580,7 +580,9 @@ class VncPod(VncCommon):
                 self._vnc_lib.ref_update('floating-ip', fip_id,
                                          'virtual-machine-interface', vmi_id, None,
                                          'DELETE')
-                FloatingIpKM.update(fip_id)
+                fip = FloatingIpKM.get(fip_id)
+                if fip is not None:
+                    FloatingIpKM.update(fip)
             except NoIdError:
                 pass
 

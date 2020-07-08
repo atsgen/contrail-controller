@@ -547,6 +547,8 @@ class VncKubernetes(VncCommon):
 
     def vnc_process(self):
         while True:
+            re_enqueue_onfail = False
+            event = None
             try:
                 event = self.q.get()
                 event_type = event['type']
@@ -556,6 +558,8 @@ class VncKubernetes(VncCommon):
                 name = metadata.get('name')
                 uid = metadata.get('uid')
                 if kind == 'Pod':
+                    if event_type == 'ADDED' or event_type == 'MODIFIED':
+                        re_enqueue_onfail = True
                     self.pod_mgr.process(event)
                 elif kind == 'Service':
                     self.service_mgr.process(event)
@@ -581,6 +585,8 @@ class VncKubernetes(VncCommon):
                 cgitb_hook(file=string_buf, format="text")
                 err_msg = string_buf.getvalue()
                 self.logger.error("%s - %s" %(self._name, err_msg))
+                if re_enqueue_onfail:
+                    self.q.put(event)
 
     @classmethod
     def get_instance(cls):
