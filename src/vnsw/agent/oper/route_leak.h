@@ -27,7 +27,7 @@ struct RouteLeakState :  public DBState {
 private:
     void AddIndirectRoute(const AgentRoute *route);
     void AddInterfaceRoute(const AgentRoute *route, const AgentPath *path);
-    void AddReceiveRoute(const AgentRoute *route);
+    void AddReceiveRoute(const AgentRoute *route, const VmInterface *vm_intf);
     void AddCompositeRoute(const AgentRoute *route);
     bool CanAdd(const InetUnicastRouteEntry *route);
     Agent *agent_;
