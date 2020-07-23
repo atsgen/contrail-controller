@@ -103,7 +103,7 @@ void RouteLeakState::AddInterfaceRoute(const AgentRoute *route,
                 } else {
                     peer_list_.insert(agent_->fabric_rt_export_peer());
                 }
-                AddReceiveRoute(route, vm_intf);
+                AddReceiveRoute(route);
                 return;
             }
         }
@@ -162,10 +162,23 @@ void RouteLeakState::AddCompositeRoute(const AgentRoute *route) {
     }
 }
 
-void RouteLeakState::AddReceiveRoute(const AgentRoute *route,
-                                     const VmInterface *vm_intf) {
+void RouteLeakState::AddReceiveRoute(const AgentRoute *route) {
     const InetUnicastRouteEntry *uc_rt =
         static_cast<const InetUnicastRouteEntry *>(route);
+    const AgentPath *active_path = uc_rt->GetActivePath();
+
+    /* This is a defensive check added to prevent the code below from casting NHs
+     * not containing an interface to RECEIVE NH */
+    const NextHop* nh = active_path->nexthop();
+    if ((nh->GetType() != NextHop::INTERFACE) &&
+        (nh->GetType() != NextHop::RECEIVE)) {
+        return;
+    }
+
+    const ReceiveNH *rch_nh =
+        static_cast<const ReceiveNH*>(active_path->nexthop());
+    const VmInterface *vm_intf =
+        static_cast<const VmInterface *>(rch_nh->GetInterface());
 
     InetUnicastAgentRouteTable *table =
         static_cast<InetUnicastAgentRouteTable *>(
