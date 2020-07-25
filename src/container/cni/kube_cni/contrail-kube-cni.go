@@ -16,37 +16,10 @@ import (
 	"github.com/containernetworking/cni/pkg/skel"
 	cniSpecVersion "github.com/containernetworking/cni/pkg/version"
 	"github.com/docker/docker/client"
-	"./crio"
 )
-
-func getCrioPodInfo(skelArgs *skel.CmdArgs) (string, string, error) {
-	if _, sockErr := os.Stat("/var/run/crio/crio.sock"); os.IsNotExist(sockErr) {
-		return "", "", sockErr
-	}
-	cli, err := crio.Client()
-        if err != nil {
-		log.Errorf("Error creating crio client. %+v", err)
-		return "", "", err
-        }
-        info, err := cli.ContainerInfo(skelArgs.ContainerID)
-        if err != nil {
-		log.Errorf("Error querying for container %s. %+v",
-			skelArgs.ContainerID, err)
-		return "", "", err
-        }
-	uuid := info.Labels["io.kubernetes.pod.uid"]
-	name := info.Labels["io.kubernetes.pod.name"]
-	log.Infof("getPodInfo success. container-id %s uuid %s name %s",
-		skelArgs.ContainerID, uuid, name)
-	return uuid, name, nil
-}
 
 // Use "docker inspect" equivalent API to get UUID and Name for container
 func getPodInfo(skelArgs *skel.CmdArgs) (string, string, error) {
-	u, n, err := getCrioPodInfo(skelArgs)
-	if err == nil {
-		return u, n, err
-	}
 	os.Setenv("DOCKER_API_VERSION", "1.22")
 	cli, err := client.NewEnvClient()
 	if err != nil {
