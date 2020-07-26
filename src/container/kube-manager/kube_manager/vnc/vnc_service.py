@@ -192,6 +192,11 @@ class VncService(VncCommon):
         return ll_obj
 
     def _create_listeners(self, namespace, lb, ports):
+        if ports is None:
+            """TODO(prabhjot) Nothing to process return from here"""
+            """this is a usual case of service type ExternalName"""
+            """need to figure out a proper handling"""
+            return
         for port in ports:
             listener_found = False
             for ll_id in lb.loadbalancer_listeners:
