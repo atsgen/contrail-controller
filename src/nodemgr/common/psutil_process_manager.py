@@ -81,8 +81,6 @@ class PsutilProcessInfoManager(object):
             info['name'] = unit
             info['group'] = unit
             found = False
-            self._event_mgr.msg_log("searching for %s" % name,
-                                    SandeshLevel.SYS_ERR)
             for proc in psutil.process_iter():
                 cmdline = proc.cmdline()
                 do_iter = False
@@ -109,8 +107,6 @@ class PsutilProcessInfoManager(object):
                     info['pid'] = proc.pid
                     info['start'] = str(proc.create_time() * 1000000)
                     info['statename'] = 'PROCESS_STATE_RUNNING'
-                    self._event_mgr.msg_log("found %s" % name,
-                                            SandeshLevel.SYS_ERR)
                     break
             if self._process_info_cache.update_cache(info):
                 self._event_handlers['PROCESS_STATE'](cpm.convert_to_pi_event(info))
@@ -130,8 +126,6 @@ class PsutilProcessInfoManager(object):
             info['name'] = unit
             info['group'] = unit
             found = False
-            self._event_mgr.msg_log("searching for %s" % name,
-                                    SandeshLevel.SYS_ERR)
             for proc in psutil.process_iter():
                 cmdline = proc.cmdline()
                 do_iter = False
@@ -158,8 +152,6 @@ class PsutilProcessInfoManager(object):
                     info['pid'] = proc.pid
                     info['start'] = str(proc.create_time() * 1000000)
                     info['statename'] = 'PROCESS_STATE_RUNNING'
-                    self._event_mgr.msg_log("found %s" % name,
-                                            SandeshLevel.SYS_ERR)
                     break
             processes_info_list.append(info)
             self._process_info_cache.update_cache(info)
