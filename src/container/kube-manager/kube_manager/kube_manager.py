@@ -73,9 +73,13 @@ class KubeNetworkManager(object):
                 self.monitors['service'] = service_monitor.ServiceMonitor(
                     args=self.args, logger=self.logger, q=self.q)
 
+                override_group = ''
+                if "K8S_EXTENSION_DISABLED" in os.environ:
+                    override_group = 'networking.k8s.io'
                 self.monitors['network_policy'] =\
                     network_policy_monitor.NetworkPolicyMonitor(
-                        args=self.args, logger=self.logger, q=self.q)
+                        args=self.args, logger=self.logger, q=self.q,
+                        override_group=override_group)
 
                 self.monitors['endpoint'] = \
                     endpoint_monitor.EndPointMonitor(

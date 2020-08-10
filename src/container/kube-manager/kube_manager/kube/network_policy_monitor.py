@@ -12,9 +12,11 @@ from kube_manager.common.kube_config_db import NetworkPolicyKM
 
 class NetworkPolicyMonitor(KubeMonitor):
 
-    def __init__(self, args=None, logger=None, q=None, network_policy_db=None):
+    def __init__(self, args=None, logger=None, q=None, network_policy_db=None,
+                 override_group=''):
         super(NetworkPolicyMonitor, self).__init__(args, logger, q,
-            NetworkPolicyKM, resource_type='networkpolicy')
+            NetworkPolicyKM, resource_type='networkpolicy',
+            override_group=override_group)
         self.init_monitor()
         self.logger.info("NetworkPolicyMonitor init done.");
 

@@ -53,7 +53,8 @@ class KubeMonitor(object):
     }
 
     def __init__(self, args=None, logger=None, q=None, db=None,
-                 resource_type='KubeMonitor',api_group=None, api_version=None):
+                 resource_type='KubeMonitor',api_group=None, api_version=None,
+                 override_group=''):
         self.name = type(self).__name__
         self.args = args
         self.logger = logger
@@ -63,6 +64,7 @@ class KubeMonitor(object):
         self.headers = {'Connection': 'Keep-Alive'}
         self.verify = False
         self.timeout = 60
+        self.override_group = override_group
 
         # Per-monitor stream handle to api server.
         self.kube_api_resp = None
@@ -157,8 +159,12 @@ class KubeMonitor(object):
             api_version = \
                 self.k8s_api_resources[resource_type]['version']
             if self.k8s_api_resources[resource_type]['group'] != '':
-                api_group = \
-                    'apis/'+self.k8s_api_resources[resource_type]['group']
+                if self.override_group != '':
+                    api_group = \
+                        'apis/'+self.override_group
+                else:
+                    api_group = \
+                        'apis/'+self.k8s_api_resources[resource_type]['group']
             else:
                 api_group = ''
             k8s_url_resource = \
